@@ -40,10 +40,15 @@ tidy_long
 tidy_long|>
   ggplot(aes(x=week, y=results, color=files))+
   geom_line()+
-  facet_grid(~group)
+  facet_grid(~group)+
+  ggtitle("Results vs. Week of Control and Experiment Group")
 
 ```
 >> The graph shows significant increase in results over the 8m weeks. While the result for control stayed relatively the same.
+
+## Problem 3
+
+
 
 
 
