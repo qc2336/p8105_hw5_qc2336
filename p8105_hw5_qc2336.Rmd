@@ -7,7 +7,11 @@ date: "2023-11-07"
 ---
 ```{r}
 library(tidyverse)
+library(dplyr)
+library(rvest)
+library(purrr)
 library(ggplot2)
+library(patchwork)
 ```
 
 ## Problem 1
@@ -22,19 +26,29 @@ homicide
 homicide=homicide|>
   mutate(city_state=str_c(city,state,sep=", "))
 
-homicide|>
+hom_total= homicide|>
   group_by(city_state)|>
   count()
   
+hom_total
 ```
 ```{r}
-homicide|>
+hom_unsolved=homicide|>
   filter(disposition %in% c ("Closed without arrest", "Open/No arrest"))|>
   group_by(city_state)|>
   count()
+
+hom_unsolved
 ```
 ```{r}
-
+prop.test(
+  hom_total|>
+    filter(city_state %in%  "Baltimore_MD")|>
+    pull(n),
+  hom_unsolved|>
+    filter(city_state %in%  "Baltimore_MD")|>
+    pull(n))|>
+  broom:
 ```
 
 
