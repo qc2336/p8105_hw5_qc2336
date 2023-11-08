@@ -72,7 +72,7 @@ all_unsolved|>
 
 ## Problem 2
 
-```{r}
+```{r, message=FALSE}
 long_data=tibble(files = list.files("data/data 2/"),
     path = str_c("data/data 2/",files))|>
   mutate(data = map(path, read_csv)) |>
