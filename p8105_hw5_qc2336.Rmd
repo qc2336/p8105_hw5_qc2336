@@ -11,7 +11,31 @@ library(ggplot2)
 ```
 
 ## Problem 1
+```{r}
+homicide=read_csv(file = "./data/homicide-data.csv")
 
+homicide
+```
+>> The raw data has 52170 observations and 12 variables, including a unique id. The date, the victim's information, where is has happened and the result.
+
+```{r}
+homicide=homicide|>
+  mutate(city_state=str_c(city,state,sep=", "))
+
+homicide|>
+  group_by(city_state)|>
+  count()
+  
+```
+```{r}
+homicide|>
+  filter(disposition %in% c ("Closed without arrest", "Open/No arrest"))|>
+  group_by(city_state)|>
+  count()
+```
+```{r}
+
+```
 
 
 ## Problem 2
