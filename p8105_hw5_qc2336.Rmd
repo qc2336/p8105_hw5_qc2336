@@ -104,16 +104,31 @@ tidy_long|>
 
 ## Problem 3
 
-
-
-
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+t_test = function(n=30,mu=0, sigma=5) {
+  sim_data = tibble( x=rnorm(n=30,mean = mu,sd= sigma))
+ 
+  result=sim_data|>
+    t.test() |> 
+    broom::tidy() |>
+    select(estimate,p.value)
+  
+  result
+}
+  
+sim_results_df = 
+  expand_grid(
+    true_mean= 0, 
+    iter = 1:5000) |> 
+  mutate(
+    result = map(true_mean, t_test)) |> 
+  unnest(result)
+  
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+
+```
+
+
