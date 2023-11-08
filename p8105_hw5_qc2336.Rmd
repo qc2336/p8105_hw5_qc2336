@@ -24,33 +24,51 @@ homicide
 
 ```{r}
 homicide=homicide|>
-  mutate(city_state=str_c(city,state,sep=", "))
+  mutate(city_state=str_c(city,state,sep=", "),
+         state = replace(state, state == "wI", "WI"),)
 
-hom_total= homicide|>
-  group_by(city_state)|>
-  count()
-  
-hom_total
 ```
+
 ```{r}
-hom_unsolved=homicide|>
-  filter(disposition %in% c ("Closed without arrest", "Open/No arrest"))|>
-  group_by(city_state)|>
-  count()
+
+homicide_n=homicide|> 
+  group_by(city_state) |>
+  summarize(
+    total_homicides = n(),
+    unsolved_homicides = sum(disposition %in% "Open/No arrest") + sum(disposition %in% "Closed without arrest")) |>
+  tibble()
+
+homicide_n
+```
+
+```{r}
+hom_unsolved=homicide_n|>
+  filter(city_state%in% "Baltimore, MD")|>
+  mutate(prop_test = map2(unsolved_homicides, total_homicides, ~prop.test(.x, .y)|>
+                            broom::tidy()))  |>
+  unnest()|>
+  select(city_state, estimate, conf.low,  conf.high)
+
 
 hom_unsolved
 ```
-```{r}
-prop.test(
-  hom_total|>
-    filter(city_state %in%  "Baltimore_MD")|>
-    pull(n),
-  hom_unsolved|>
-    filter(city_state %in%  "Baltimore_MD")|>
-    pull(n))|>
-  broom:
-```
 
+```{r}
+all_unsolved=homicide_n|>
+  mutate(prop_test = map2(unsolved_homicides, total_homicides, ~prop.test(.x, .y)|>
+                            broom::tidy()))  |>
+  unnest()|>
+  select(city_state, estimate, conf.low,  conf.high)
+
+all_unsolved
+
+all_unsolved|>
+  mutate(city_state = fct_reorder(city_state, estimate))|>
+  ggplot(aes(y=city_state, x=estimate))+
+  geom_point()+
+  geom_errorbar(aes(xmin = conf.low, xmax = conf.high))
+
+```
 
 ## Problem 2
 
